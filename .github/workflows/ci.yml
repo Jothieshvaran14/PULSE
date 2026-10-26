@@ -88,6 +88,16 @@ jobs:
     env:
       # Ephemeral service-container database (never a production resource).
       DATABASE_URL: postgresql://pulse_ci:pulse_ci_password@localhost:5432/pulse_ci
+      # CI-only test values -- NOT secrets, deliberately non-sensitive.
+      # The integration suite signs its own JWTs and normally inherits these
+      # from the developer's untracked .env, which does not exist on the
+      # runner: test-db.mjs loads .env ONLY when DATABASE_URL is absent, and
+      # the job sets DATABASE_URL above. Omitting them fails the run at
+      # fixtures.mjs signJwt() ("JWT_SECRET missing or too short"), which is
+      # the reproducible failure this block fixes. Both exceed the 32-char
+      # minimum enforced by the config schema and the fixture signer.
+      JWT_SECRET: ci-only-jwt-signing-secret-for-tests-not-a-real-credential
+      TOKEN_ENCRYPTION_KEY: ci-only-encryption-key-for-tests-not-a-real-key
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
