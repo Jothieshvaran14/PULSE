@@ -1,0 +1,442 @@
+{
+  "info": {
+    "name": "RYME API - Milestone 1",
+    "description": "Complete API testing collection for RYME authentication system.\n\nBASE URL: http://localhost:3001\n\nSetup:\n1. Start PostgreSQL: docker compose -f docker/docker-compose.yml up -d postgres\n2. Start Backend: cd apps/backend && pnpm dev\n3. Start Frontend: cd apps/frontend && pnpm dev\n\nEnvironment Variables Required:\n- DATABASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET\n- JWT_SECRET (32+ chars), TOKEN_ENCRYPTION_KEY (32+ chars)\n- FRONTEND_URL=http://localhost:5173",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /api/v1/health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/health",
+            "description": "Check system health. Returns Docker and DB status."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth - Public",
+      "item": [
+        {
+          "name": "GET /api/v1/auth/github",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/github",
+            "description": "Initiate GitHub OAuth. Returns authorizationUrl and state."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/auth/github/callback (MISSING params)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error code is MISSING_PARAMETERS', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.error.code).to.eql('MISSING_PARAMETERS');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/github/callback",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "description": "Callback with no body. Should return 400."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/auth/github/callback (INVALID state)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "",
+                  "pm.test('Error code is INVALID_STATE', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.error.code).to.eql('INVALID_STATE');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/github/callback",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"code\": \"fake_code\", \"state\": \"fake_state\"}"
+            },
+            "description": "Callback with invalid state. Should return 403."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/auth/logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Success is true', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/logout",
+            "description": "Logout. Returns success message."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth - Protected (Requires JWT)",
+      "item": [
+        {
+          "name": "GET /api/v1/auth/me (NO token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/me",
+            "description": "Get current user without token. Should return 401."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/auth/me (INVALID token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Error code is INVALID_TOKEN', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.error.code).to.eql('INVALID_TOKEN');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/me",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_abc123"
+              }
+            ],
+            "description": "Get current user with invalid token. Should return 401."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/auth/me (VALID token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has user data', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.success).to.be.true;",
+                  "    pm.expect(data.data).to.have.property('id');",
+                  "    pm.expect(data.data).to.have.property('githubLogin');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/me",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "description": "Get current user with valid token. Set authToken variable first."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Projects (All Protected)",
+      "item": [
+        {
+          "name": "GET /api/v1/projects (NO token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "List projects without token. Should return 401."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/v1/projects (WITH token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has pagination', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.success).to.be.true;",
+                  "    pm.expect(data.meta).to.have.property('pagination');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "projects"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "description": "List projects with valid token."
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/v1/projects (WITH token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has project data', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.success).to.be.true;",
+                  "    pm.expect(data.data).to.have.property('id');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/projects",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"test-project\", \"repositoryUrl\": \"https://github.com/test/repo.git\"}"
+            },
+            "description": "Create project with valid token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Deployments (All Protected)",
+      "item": [
+        {
+          "name": "GET /api/v1/deployments/:id (NO token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/deployments/fake-deployment-id",
+            "description": "Get deployment without token. Should return 401."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Security Tests",
+      "item": [
+        {
+          "name": "POST /api/v1/auth/github/callback (MALFORMED JSON)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 400 or 415', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 415]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/github/callback",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{invalid json"
+            },
+            "description": "Send malformed JSON. Should return 400."
+          },
+          "response": []
+        },
+        {
+          "name": "Unknown route",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Returns 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test('Error code is ROUTE_NOT_FOUND', function () {",
+                  "    var data = pm.response.json();",
+                  "    pm.expect(data.error.code).to.eql('ROUTE_NOT_FOUND');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/nonexistent",
+            "description": "Request unknown route. Should return 404."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

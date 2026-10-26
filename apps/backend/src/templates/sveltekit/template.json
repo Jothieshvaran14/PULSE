@@ -1,0 +1,13 @@
+{
+  "framework": "sveltekit",
+  "version": 1,
+  "displayName": "SvelteKit",
+  "category": "static",
+  "proxy": "nginx",
+  "containerPort": 80,
+  "outputDirectory": "build",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

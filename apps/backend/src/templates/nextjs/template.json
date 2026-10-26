@@ -1,0 +1,13 @@
+{
+  "framework": "nextjs",
+  "version": 1,
+  "displayName": "Next.js",
+  "category": "fullstack",
+  "proxy": "none",
+  "containerPort": 3000,
+  "outputDirectory": ".next",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": true,
+  "supportsPreview": false
+}

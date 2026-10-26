@@ -1,0 +1,212 @@
+{
+  "info": {
+    "name": "RYME Dev Login",
+    "description": "Tests for development-only GitHub token authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001/api/v1"
+    },
+    {
+      "key": "authToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health",
+        "description": "Verify server is running"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Server is running', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dev Login",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/dev/login",
+        "description": "Authenticate using GITHUB_TOKEN from server environment"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Login successful', function () {",
+              "    pm.response.to.have.status(200);",
+              "    var response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.data).to.have.property('token');",
+              "    pm.expect(response.data).to.have.property('user');",
+              "    pm.environment.set('authToken', response.data.token);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get User Profile",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/auth/me",
+        "description": "Get authenticated user's profile",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{authToken}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('User profile returned', function () {",
+              "    pm.response.to.have.status(200);",
+              "    var response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.data).to.have.property('githubLogin');",
+              "    pm.expect(response.data).to.have.property('githubId');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Repositories",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/github/repos?per_page=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["github", "repos"],
+          "query": [
+            {
+              "key": "per_page",
+              "value": "10"
+            }
+          ]
+        },
+        "description": "Get all accessible repositories",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{authToken}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Repositories returned', function () {",
+              "    pm.response.to.have.status(200);",
+              "    var response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.data).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Owner Repositories",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/github/repos?type=owner&sort=full_name&direction=asc",
+          "host": ["{{baseUrl}}"],
+          "path": ["github", "repos"],
+          "query": [
+            {
+              "key": "type",
+              "value": "owner"
+            },
+            {
+              "key": "sort",
+              "value": "full_name"
+            },
+            {
+              "key": "direction",
+              "value": "asc"
+            }
+          ]
+        },
+        "description": "Get owner repositories sorted by name",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{authToken}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Owner repositories returned', function () {",
+              "    pm.response.to.have.status(200);",
+              "    var response = pm.response.json();",
+              "    pm.expect(response.success).to.be.true;",
+              "    pm.expect(response.data).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unauthorized Access",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/github/repos",
+        "description": "Attempt to access repos without authentication"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns 401 Unauthorized', function () {",
+              "    pm.response.to.have.status(401);",
+              "    var response = pm.response.json();",
+              "    pm.expect(response.success).to.be.false;",
+              "    pm.expect(response.error.code).to.equal('UNAUTHORIZED');",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "framework": "python",
+  "version": 1,
+  "displayName": "Python",
+  "category": "backend",
+  "proxy": "none",
+  "containerPort": 8000,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

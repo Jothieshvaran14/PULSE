@@ -1,0 +1,13 @@
+{
+  "framework": "custom",
+  "version": 1,
+  "displayName": "Custom Dockerfile",
+  "category": "backend",
+  "proxy": "none",
+  "containerPort": 3000,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": true,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

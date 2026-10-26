@@ -1,0 +1,25 @@
+services:
+  traefik:
+    image: traefik:v3.4
+    container_name: ryme-traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/traefik:/etc/traefik
+      - ./docker/traefik/dynamic:/etc/traefik/dynamic
+    networks:
+      - ryme-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+    environment:
+      - TZ=UTC
+
+networks:
+  ryme-network:
+    external: true

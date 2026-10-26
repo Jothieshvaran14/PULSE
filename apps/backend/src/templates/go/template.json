@@ -1,0 +1,13 @@
+{
+  "framework": "go",
+  "version": 1,
+  "displayName": "Go",
+  "category": "backend",
+  "proxy": "none",
+  "containerPort": 8080,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

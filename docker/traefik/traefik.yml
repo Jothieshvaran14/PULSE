@@ -1,0 +1,24 @@
+# Traefik Static Configuration
+# RYME Reverse Proxy — Development
+
+# API / Dashboard
+api:
+  dashboard: true
+  insecure: true
+
+# Entrypoints
+entryPoints:
+  web:
+    address: ":80"
+
+# File provider — dynamic routing configs written by backend
+providers:
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+# Logging
+log:
+  level: DEBUG
+
+accessLog: {}

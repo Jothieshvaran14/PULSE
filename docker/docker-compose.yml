@@ -1,0 +1,60 @@
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — Primary database
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: ryme-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ryme}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ryme_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-ryme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ryme}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Traefik — Reverse proxy for deployed applications
+  # ---------------------------------------------------------------------------
+  # Traefik uses the Docker provider to auto-discover containers with labels.
+  # It does NOT proxy the RYME backend/frontend — only user-deployed apps.
+  traefik:
+    image: traefik:v3.3
+    container_name: ryme-traefik
+    restart: unless-stopped
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    ports:
+      # HTTP entrypoint for deployed apps (*.localhost)
+      - "80:80"
+      # Traefik dashboard (development only)
+      - "${TRAEFIK_DASHBOARD_PORT:-8080}:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+    networks:
+      - ryme-network
+
+# -----------------------------------------------------------------------------
+# Volumes
+# -----------------------------------------------------------------------------
+volumes:
+  postgres_data:
+    driver: local
+
+# -----------------------------------------------------------------------------
+# Networks
+# -----------------------------------------------------------------------------
+# All deployed containers join this network so Traefik can route to them.
+# The RYME backend creates containers on this network via dockerode.
+networks:
+  ryme-network:
+    name: ryme-network
+    driver: bridge

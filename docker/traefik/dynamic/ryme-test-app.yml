@@ -1,0 +1,18 @@
+http:
+  routers:
+    ryme-test-app:
+      rule: "Host(`ryme-test-app.localhost`)"
+      entryPoints:
+        - web
+      service: ryme-test-app
+
+
+  services:
+    ryme-test-app:
+      loadBalancer:
+        servers:
+          - url: "http://ryme-deploy-23890305:80"
+
+
+
+

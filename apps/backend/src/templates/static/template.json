@@ -1,0 +1,13 @@
+{
+  "framework": "static",
+  "version": 1,
+  "displayName": "Static HTML",
+  "category": "static",
+  "proxy": "nginx",
+  "containerPort": 80,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

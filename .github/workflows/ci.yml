@@ -1,0 +1,119 @@
+# PULSE Phase 0.1 — CI quality gate (docs/pulse/PULSE-12).
+#
+# Design constraints (verified locally before adding this file):
+#   - NO production credentials: the quality job copies .env.example -> .env,
+#     which was verified to pass the backend config validation (CONFIG OK).
+#   - Docker-dependent checks are NOT in CI: `pnpm test` is Docker-free
+#     (backend test-e2e.mjs is template/env-only; dev-gate and the Traefik
+#     round-trip test are static/in-memory and never write routes.yml).
+#   - Integration tests run in a separate job against an ISOLATED ephemeral
+#     PostgreSQL service container. The test suite creates and drops its own
+#     scratch database (ryme_phase01_test) and never writes to the service's
+#     primary database. No external/production resources are touched.
+#   - Actions are pinned to full commit SHAs with version comments
+#     (supply-chain immutability), per docs/pulse/PULSE-08.
+#   - No step echoes environment variables or secrets.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: typecheck, lint, build, test (Docker-free)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+        # version comes from package.json "packageManager": "pnpm@9.15.4"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter @ryme/db db:generate
+
+      # CI-safe config only (no real secrets) — verified to satisfy the Zod
+      # config schema. The backend test script reads --env-file=../../.env.
+      - name: Provide CI-safe environment file
+        run: cp .env.example .env
+
+      # Workspace packages resolve each other through dist/ (main/types), so
+      # build must run before typecheck on a fresh checkout. `pnpm -r build`
+      # runs topologically: packages/db + packages/shared first.
+      - name: Build
+        run: pnpm build
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test (Docker-free unit/e2e + dev-gate + Traefik round-trip)
+        run: pnpm test
+
+  integration:
+    name: API regression tests (isolated PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pulse_ci
+          POSTGRES_PASSWORD: pulse_ci_password
+          POSTGRES_DB: pulse_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      # Ephemeral service-container database (never a production resource).
+      DATABASE_URL: postgresql://pulse_ci:pulse_ci_password@localhost:5432/pulse_ci
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter @ryme/db db:generate
+
+      # Backend runtime resolves @ryme/shared and @ryme/db through their
+      # dist/ entry points — both must be built for the harness to boot.
+      - name: Build workspace runtime packages
+        run: pnpm --filter @ryme/shared --filter @ryme/db build
+
+      # Creates/drops the guarded scratch database (ryme_phase01_test) inside
+      # the service container; JWT/encryption keys fall back to dummy values
+      # inside the harness. Explicit cleanup happens in the test's finally.
+      - name: Run API regression tests
+        run: pnpm test:integration

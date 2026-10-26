@@ -1,0 +1,13 @@
+{
+  "framework": "flask",
+  "version": 1,
+  "displayName": "Flask",
+  "category": "backend",
+  "proxy": "none",
+  "containerPort": 5000,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

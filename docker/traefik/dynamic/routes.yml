@@ -1,0 +1,63 @@
+http:
+  routers:
+    dashboard:
+      rule: "Host(`traefik.localhost`)"
+      entryPoints:
+        - web
+      service: api@internal
+    stress-test-3:
+      rule: "Host(`stress-test-3.localhost`)"
+      entryPoints:
+        - web
+      service: stress-test-3
+    ryme-test-app:
+      rule: Host(`ryme-test-app.localhost`)
+      entryPoints:
+        - web
+      service: ryme-test-app
+    stress-test-5:
+      rule: Host(`stress-test-5.localhost`)
+      entryPoints:
+        - web
+      service: stress-test-5
+    stress-test-1:
+      rule: Host(`stress-test-1.localhost`)
+      entryPoints:
+        - web
+      service: stress-test-1
+    stress-test-4:
+      rule: Host(`stress-test-4.localhost`)
+      entryPoints:
+        - web
+      service: stress-test-4
+    stress-test-2:
+      rule: Host(`stress-test-2.localhost`)
+      entryPoints:
+        - web
+      service: stress-test-2
+
+  services:
+    ryme-test-app:
+      loadBalancer:
+        servers:
+          - url: "http://ryme-deploy-a8e2828d:80"
+    stress-test-5:
+      loadBalancer:
+        servers:
+          - url: "http://ryme-deploy-23576b2b:80"
+    stress-test-1:
+      loadBalancer:
+        servers:
+          - url: "http://ryme-deploy-04aee201:80"
+    stress-test-4:
+      loadBalancer:
+        servers:
+          - url: "http://ryme-deploy-6bd6e594:80"
+    stress-test-2:
+      loadBalancer:
+        servers:
+          - url: "http://ryme-deploy-9b8b566d:80"
+    stress-test-3:
+      loadBalancer:
+        servers:
+          - url: "http://ryme-deploy-bb2e125a:80"

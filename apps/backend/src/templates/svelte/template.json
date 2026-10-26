@@ -1,0 +1,13 @@
+{
+  "framework": "svelte",
+  "version": 1,
+  "displayName": "Svelte",
+  "category": "static",
+  "proxy": "nginx",
+  "containerPort": 80,
+  "outputDirectory": "dist",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// A user authenticated via GitHub OAuth.
+/// Stores profile information and encrypted access token for API access.
+model User {
+  id                   String    @id @default(uuid())
+  email                String?   @unique
+  name                 String?
+  avatarUrl            String?   @map("avatar_url")
+  githubId             Int       @unique @map("github_id")
+  githubLogin          String    @unique @map("github_login")
+  accessTokenEncrypted String    @map("access_token_encrypted")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  projects             Project[]
+
+  @@map("users")
+}
+
+/// A project represents a GitHub repository registered for deployment.
+model Project {
+  id                 String        @id @default(uuid())
+  name               String        @unique
+  repositoryUrl      String        @map("repository_url")
+  ownerId            String?       @map("owner_id")
+  githubToken        String?       @map("github_token")
+  defaultBranch      String        @default("main") @map("default_branch")
+  frameworkId        String?       @map("framework_id")
+  status             ProjectStatus @default(ACTIVE)
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+  cloneUrl           String?       @map("clone_url")
+  githubId           Int?          @unique @map("github_id")
+  detectedFramework  String?       @map("detected_framework")
+  frameworkVersion   String?       @map("framework_version")
+  packageManager     String?       @map("package_manager")
+  buildCommand       String?       @map("build_command")
+  startCommand       String?       @map("start_command")
+  installCommand     String?       @map("install_command")
+  devCommand         String?       @map("dev_command")
+  outputDirectory    String?       @map("output_directory")
+  frameworkConfidence Float?       @map("framework_confidence")
+  deployments        Deployment[]
+  framework          Framework?    @relation(fields: [frameworkId], references: [id])
+  owner              User?         @relation(fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+  @@map("projects")
+}
+
+/// A deployment represents a single build-and-run attempt for a project.
+/// Tracks the entire lifecycle from queue to running (or failed).
+model Deployment {
+  id                  String           @id @default(uuid())
+  projectId           String           @map("project_id")
+  status              DeploymentStatus @default(QUEUED)
+  commitHash          String?          @map("commit_hash")
+  imageId             String?          @map("image_id")
+  containerId         String?          @map("container_id")
+  port                Int?
+  url                 String?
+  framework           String?
+  packageManager      String?          @map("package_manager")
+  installCommand      String?          @map("install_command")
+  buildCommand        String?          @map("build_command")
+  dockerfileGenerated Boolean          @default(false) @map("dockerfile_generated")
+  errorMessage        String?          @map("error_message")
+  exitCode            Int?             @map("exit_code")
+  startedAt           DateTime?        @map("started_at")
+  completedAt         DateTime?        @map("completed_at")
+  installDuration     Int?             @map("install_duration")
+  buildDuration       Int?             @map("build_duration")
+  totalDuration       Int?             @map("total_duration")
+  createdAt           DateTime         @default(now()) @map("created_at")
+  workspacePath       String?          @map("workspace_path")
+  logs                DeploymentLog[]
+  project             Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  ports               Port[]
+
+  @@index([projectId])
+  @@index([status])
+  @@map("deployments")
+}
+
+/// Structured log entries for each step of the deployment pipeline.
+/// Enables filtering by step and level in the dashboard log viewer.
+model DeploymentLog {
+  id           String         @id @default(uuid())
+  deploymentId String         @map("deployment_id")
+  step         DeploymentStep
+  level        LogLevel       @default(INFO)
+  message      String
+  metadata     Json?
+  createdAt    DateTime       @default(now()) @map("created_at")
+  deployment   Deployment     @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+
+  @@index([deploymentId])
+  @@index([deploymentId, step])
+  @@map("deployment_logs")
+}
+
+/// Tracks port allocations to prevent conflicts and enable cleanup.
+/// Uses database-level uniqueness for atomic allocation.
+model Port {
+  id           String      @id @default(uuid())
+  portNumber   Int         @unique @map("port_number")
+  deploymentId String?     @map("deployment_id")
+  status       PortStatus  @default(ALLOCATED)
+  allocatedAt  DateTime    @default(now()) @map("allocated_at")
+  releasedAt   DateTime?   @map("released_at")
+  deployment   Deployment? @relation(fields: [deploymentId], references: [id])
+
+  @@index([status])
+  @@map("ports")
+}
+
+/// Registry of supported frameworks with detection metadata.
+/// Seeded on setup; extensible without code changes.
+model Framework {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  displayName String    @map("display_name")
+  detectFiles Json      @map("detect_files")
+  defaultPort Int       @map("default_port")
+  category    String
+  createdAt   DateTime  @default(now()) @map("created_at")
+  projects    Project[]
+
+  @@map("frameworks")
+}
+
+enum ProjectStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
+enum DeploymentStatus {
+  QUEUED
+  CLONING
+  DETECTING
+  INSTALLING
+  BUILDING
+  STARTING
+  RUNNING
+  FAILED
+  STOPPED
+}
+
+enum DeploymentStep {
+  CLONE
+  DETECT
+  INSTALL
+  GENERATE_DOCKERFILE
+  BUILD
+  START
+  ROUTE
+  COMPLETE
+  ERROR
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+}
+
+enum PortStatus {
+  ALLOCATED
+  RELEASED
+}

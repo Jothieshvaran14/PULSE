@@ -1,0 +1,13 @@
+{
+  "framework": "react",
+  "version": 1,
+  "displayName": "React",
+  "category": "static",
+  "proxy": "nginx",
+  "containerPort": 80,
+  "outputDirectory": "dist",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

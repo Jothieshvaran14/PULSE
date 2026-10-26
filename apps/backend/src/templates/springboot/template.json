@@ -1,0 +1,13 @@
+{
+  "framework": "springboot",
+  "version": 1,
+  "displayName": "Spring Boot",
+  "category": "backend",
+  "proxy": "none",
+  "containerPort": 8080,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

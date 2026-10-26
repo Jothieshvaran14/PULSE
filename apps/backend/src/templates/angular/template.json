@@ -1,0 +1,13 @@
+{
+  "framework": "angular",
+  "version": 1,
+  "displayName": "Angular",
+  "category": "static",
+  "proxy": "nginx",
+  "containerPort": 80,
+  "outputDirectory": "dist/browser",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

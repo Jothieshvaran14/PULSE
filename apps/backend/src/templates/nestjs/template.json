@@ -1,0 +1,13 @@
+{
+  "framework": "nestjs",
+  "version": 1,
+  "displayName": "NestJS",
+  "category": "backend",
+  "proxy": "none",
+  "containerPort": 3000,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

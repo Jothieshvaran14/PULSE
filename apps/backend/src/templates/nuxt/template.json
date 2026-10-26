@@ -1,0 +1,13 @@
+{
+  "framework": "nuxt",
+  "version": 1,
+  "displayName": "Nuxt",
+  "category": "static",
+  "proxy": "nginx",
+  "containerPort": 80,
+  "outputDirectory": ".output/public",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

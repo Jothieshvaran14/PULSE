@@ -1,0 +1,13 @@
+{
+  "framework": "rust",
+  "version": 1,
+  "displayName": "Rust",
+  "category": "backend",
+  "proxy": "none",
+  "containerPort": 8080,
+  "outputDirectory": ".",
+  "healthCheckPath": "/",
+  "supportsDockerfile": false,
+  "supportsRollback": false,
+  "supportsPreview": false
+}

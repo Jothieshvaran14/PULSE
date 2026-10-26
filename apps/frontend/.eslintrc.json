@@ -1,0 +1,14 @@
+{
+  "extends": ["../../.eslintrc.json"],
+  "plugins": ["react", "react-hooks"],
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": false
+  },
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/react-in-jsx-scope": "off"
+  }
+}
