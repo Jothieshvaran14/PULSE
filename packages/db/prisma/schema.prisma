@@ -80,6 +80,11 @@ model Deployment {
   totalDuration       Int?             @map("total_duration")
   createdAt           DateTime         @default(now()) @map("created_at")
   workspacePath       String?          @map("workspace_path")
+  rolledBackFromId    String?          @map("rolled_back_from_id")
+  rollbackTimestamp   DateTime?        @map("rollback_timestamp")
+  rollbackReason      String?          @map("rollback_reason")
+  rolledBackFrom      Deployment?      @relation("RollbackHistory", fields: [rolledBackFromId], references: [id])
+  rollbackTarget      Deployment[]     @relation("RollbackHistory")
   logs                DeploymentLog[]
   project             Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
   ports               Port[]
@@ -152,6 +157,7 @@ enum DeploymentStatus {
   RUNNING
   FAILED
   STOPPED
+  ROLLBACK
 }
 
 enum DeploymentStep {
@@ -164,6 +170,7 @@ enum DeploymentStep {
   ROUTE
   COMPLETE
   ERROR
+  ROLLBACK
 }
 
 enum LogLevel {
