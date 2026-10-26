@@ -78,7 +78,7 @@ Severity: **S1** critical · **S2** high · **S3** medium · **S4** low/informat
 | SEC-20 | No tenant model at all (single implicit user space) | S1 for multi-tenant claims | `[STATIC]` schema | Add `tenant_id` + membership before any multi-user claim (ADR-006/M8) | 2 |
 | SEC-21 | GitHub tokens encrypted at rest (AES-256-GCM) — **good**; token also redacted from git errors and logs (uncommitted change) | S4 (positive) | `[STATIC]` + `[RUN] git diff` | Commit the redaction work | 0 |
 | SEC-22 | Local `.env` holds real dev secrets; correctly gitignored | S3 | `[RUN]` | Keep; add pre-commit secret scan (gitleaks) so it stays that way | 1 |
-| SEC-23 | Postgres published on host `5432` with default password `ryme_dev_password` | S3 (dev) | `[STATIC]` compose | Bind to `127.0.0.1`; document non-default creds for any shared environment | 1 |
+| SEC-23 | Postgres published on host `5432` with a template default password (Phase 0.2: template now uses the non-sensitive `change_me_local_dev_password` placeholder; the local `.env` value is unchanged) | S3 (dev) | `[STATIC]` compose + `[RUN]` Phase 0.2 template edit | Bind to `127.0.0.1`; use non-default creds for any shared environment (still open) | 1 |
 | SEC-24 | Traefik dashboard exposed insecurely on `:8080` | S3 | `[STATIC]` `traefik.yml` `insecure: true` | Bind to localhost / disable in non-dev | 1 |
 
 ### 2.5 Software supply chain & operational readiness
