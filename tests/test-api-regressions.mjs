@@ -68,6 +68,9 @@ try {
   // ---------------------------------------------------------------------------
   // 2. Boot the real app against the scratch DB
   // ---------------------------------------------------------------------------
+  // Accumulates the harness child's stdout so the request-log redaction
+  // assertions (SEC-21) can inspect what the app actually wrote.
+  let childLog = "";
   child = spawn(process.execPath, [TSX_CLI, HARNESS], {
     cwd: REPO_ROOT,
     env: { ...process.env, DATABASE_URL: testUrl },
@@ -80,6 +83,7 @@ try {
     const timer = setTimeout(() => reject(new Error(`harness timeout:\n${out}\n${errOut}`)), 40000);
     child.stdout.on("data", (c) => {
       out += c.toString();
+      childLog += c.toString();
       const m = out.match(/READY (\d+)/);
       if (m) { clearTimeout(timer); resolve(Number(m[1])); }
     });
@@ -186,6 +190,17 @@ try {
   const noToken = await get(projDeps);
   check("deployments list without token => 401 (auth unchanged)", noToken.status === 401,
     `got ${noToken.status}`);
+
+  // -------------------------------------------------------------------------
+  // 8. Authorization header must never reach the logs (SEC-21)
+  // -------------------------------------------------------------------------
+  console.log("\n[5] Request-log redaction (SEC-21)");
+  const redactProbe = await get("/projects?page=1&limit=1", victimToken);
+  check("authenticated probe => 200", redactProbe.status === 200, `got ${redactProbe.status}`);
+  // Give the child process time to flush its access-log line for that request.
+  await new Promise((r) => setTimeout(r, 700));
+  check("access log redacts the Authorization header", childLog.includes("[REDACTED]"));
+  check("raw JWT never appears in request logs", !childLog.includes(victimToken));
 } catch (err) {
   failures++;
   console.log(`FAIL  test run aborted — ${String(err).message.split("\n").slice(0, 6).join(" | ")}`);
