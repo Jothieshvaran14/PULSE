@@ -1,10 +1,10 @@
-# RYME Dev Login Test Script
+# PULSE Dev Login Test Script
 # ========================
 # This script tests the development-only GitHub token authentication.
 
 $BASE_URL = "http://localhost:3001/api/v1"
 
-Write-Host "RYME Dev Login Tests" -ForegroundColor Cyan
+Write-Host "PULSE Dev Login Tests" -ForegroundColor Cyan
 Write-Host "==================" -ForegroundColor Cyan
 
 # Test 1: Health Check

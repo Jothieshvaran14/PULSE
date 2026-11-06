@@ -1,5 +1,5 @@
 # =============================================================================
-# RYME API - Curl Test Script (Windows PowerShell)
+# PULSE API - Curl Test Script (Windows PowerShell)
 # =============================================================================
 # Usage: .\tests\test-api.ps1
 # Requires: curl (built into Windows 10+)
@@ -42,7 +42,7 @@ function Test-Endpoint {
 }
 
 Write-Host "=============================================" -ForegroundColor Yellow
-Write-Host " RYME API - Milestone 1 Test Suite" -ForegroundColor Yellow
+Write-Host " PULSE API - Milestone 1 Test Suite" -ForegroundColor Yellow
 Write-Host "=============================================" -ForegroundColor Yellow
 Write-Host ""
 
@@ -51,8 +51,8 @@ Write-Host ""
 # =============================================================================
 Write-Host "`n[1/8] HEALTH CHECK" -ForegroundColor Magenta
 
-$health = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_health.json" "$BASE/api/v1/health"
-$healthBody = Get-Content "$env:TEMP\ryme_health.json" -Raw | ConvertFrom-Json
+$health = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_health.json" "$BASE/api/v1/health"
+$healthBody = Get-Content "$env:TEMP\pulse_health.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $health"
 Write-Host "  Docker: $($healthBody.data.docker)"
 Write-Host "  Database: $($healthBody.data.database)"
@@ -64,8 +64,8 @@ if ($health -eq "200") { $PASS++ } else { $FAIL++ }
 # =============================================================================
 Write-Host "`n[2/8] AUTH - Initiate GitHub Login" -ForegroundColor Magenta
 
-$authInit = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_auth_init.json" "$BASE/api/v1/auth/github"
-$authInitBody = Get-Content "$env:TEMP\ryme_auth_init.json" -Raw | ConvertFrom-Json
+$authInit = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_auth_init.json" "$BASE/api/v1/auth/github"
+$authInitBody = Get-Content "$env:TEMP\pulse_auth_init.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $authInit"
 Write-Host "  Authorization URL: $($authInitBody.data.authorizationUrl)"
 Write-Host "  State: $($authInitBody.data.state)"
@@ -80,11 +80,11 @@ $oauthState = $authInitBody.data.state
 # =============================================================================
 Write-Host "`n[3/8] AUTH - Callback (Missing Params)" -ForegroundColor Magenta
 
-$callbackMissing = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_callback_missing.json" `
+$callbackMissing = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_callback_missing.json" `
     -X POST "$BASE/api/v1/auth/github/callback" `
     -H "Content-Type: application/json" `
     -d "{}"
-$callbackMissingBody = Get-Content "$env:TEMP\ryme_callback_missing.json" -Raw | ConvertFrom-Json
+$callbackMissingBody = Get-Content "$env:TEMP\pulse_callback_missing.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $callbackMissing"
 Write-Host "  Error: $($callbackMissingBody.error.code)"
 
@@ -97,13 +97,13 @@ Write-Host "`n[4/8] AUTH - Callback (Invalid State)" -ForegroundColor Magenta
 
 # NOTE: body passed via @file because Windows PowerShell 5.1 strips embedded
 # double quotes when passing native-command arguments, which corrupted the JSON.
-$callbackInvalidBodyFile = "$env:TEMP\ryme_callback_invalid_body.json"
+$callbackInvalidBodyFile = "$env:TEMP\pulse_callback_invalid_body.json"
 Set-Content -Path $callbackInvalidBodyFile -Value '{"code": "fake_code", "state": "fake_state"}' -Encoding ascii -NoNewline
-$callbackInvalid = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_callback_invalid.json" `
+$callbackInvalid = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_callback_invalid.json" `
     -X POST "$BASE/api/v1/auth/github/callback" `
     -H "Content-Type: application/json" `
     -d "@$callbackInvalidBodyFile"
-$callbackInvalidBody = Get-Content "$env:TEMP\ryme_callback_invalid.json" -Raw | ConvertFrom-Json
+$callbackInvalidBody = Get-Content "$env:TEMP\pulse_callback_invalid.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $callbackInvalid"
 Write-Host "  Error: $($callbackInvalidBody.error.code)"
 
@@ -114,9 +114,9 @@ if ($callbackInvalid -eq "403") { $PASS++ } else { $FAIL++ }
 # =============================================================================
 Write-Host "`n[5/8] AUTH - Get Me (No Token)" -ForegroundColor Magenta
 
-$meNoToken = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_me_notoken.json" `
+$meNoToken = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_me_notoken.json" `
     "$BASE/api/v1/auth/me"
-$meNoTokenBody = Get-Content "$env:TEMP\ryme_me_notoken.json" -Raw | ConvertFrom-Json
+$meNoTokenBody = Get-Content "$env:TEMP\pulse_me_notoken.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $meNoToken"
 Write-Host "  Error: $($meNoTokenBody.error.code)"
 
@@ -127,10 +127,10 @@ if ($meNoToken -eq "401") { $PASS++ } else { $FAIL++ }
 # =============================================================================
 Write-Host "`n[6/8] AUTH - Get Me (Invalid Token)" -ForegroundColor Magenta
 
-$meBadToken = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_me_badtoken.json" `
+$meBadToken = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_me_badtoken.json" `
     -H "Authorization: Bearer invalid_token_abc123" `
     "$BASE/api/v1/auth/me"
-$meBadTokenBody = Get-Content "$env:TEMP\ryme_me_badtoken.json" -Raw | ConvertFrom-Json
+$meBadTokenBody = Get-Content "$env:TEMP\pulse_me_badtoken.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $meBadToken"
 Write-Host "  Error: $($meBadTokenBody.error.code)"
 
@@ -141,9 +141,9 @@ if ($meBadToken -eq "401") { $PASS++ } else { $FAIL++ }
 # =============================================================================
 Write-Host "`n[7/8] PROJECTS - List (No Token)" -ForegroundColor Magenta
 
-$projNoToken = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_proj_notoken.json" `
+$projNoToken = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_proj_notoken.json" `
     "$BASE/api/v1/projects?page=1&limit=10"
-$projNoTokenBody = Get-Content "$env:TEMP\ryme_proj_notoken.json" -Raw | ConvertFrom-Json
+$projNoTokenBody = Get-Content "$env:TEMP\pulse_proj_notoken.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $projNoToken"
 Write-Host "  Error: $($projNoTokenBody.error.code)"
 
@@ -154,9 +154,9 @@ if ($projNoToken -eq "401") { $PASS++ } else { $FAIL++ }
 # =============================================================================
 Write-Host "`n[8/8] UNKNOWN ROUTE - 404" -ForegroundColor Magenta
 
-$notFound = curl.exe -s -w "%{http_code}" -o "$env:TEMP\ryme_notfound.json" `
+$notFound = curl.exe -s -w "%{http_code}" -o "$env:TEMP\pulse_notfound.json" `
     "$BASE/api/v1/nonexistent"
-$notFoundBody = Get-Content "$env:TEMP\ryme_notfound.json" -Raw | ConvertFrom-Json
+$notFoundBody = Get-Content "$env:TEMP\pulse_notfound.json" -Raw | ConvertFrom-Json
 Write-Host "  Status: $notFound"
 Write-Host "  Error: $($notFoundBody.error.code)"
 
@@ -195,8 +195,8 @@ Write-Host '  curl -H "Authorization: Bearer <YOUR_TOKEN>" http://localhost:3001
 Write-Host ""
 
 # Cleanup temp files
-Remove-Item "$env:TEMP\ryme_*.json" -ErrorAction SilentlyContinue
-Remove-Item "$env:TEMP\ryme_callback_invalid_body.json" -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\pulse_*.json" -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\pulse_callback_invalid_body.json" -ErrorAction SilentlyContinue
 
 # Non-zero exit on failure so CI/gates can rely on this script
 if ($FAIL -gt 0) { exit 1 } else { exit 0 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# RYME — Database Reset
+# PULSE — Database Reset
 # =============================================================================
 # Drops and recreates the database, runs migrations, and re-seeds.
 # WARNING: This destroys all data.
@@ -13,7 +13,7 @@ GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-log() { echo -e "${CYAN}[RYME]${NC} $1"; }
+log() { echo -e "${CYAN}[PULSE]${NC} $1"; }
 success() { echo -e "${GREEN}[✓]${NC} $1"; }
 error() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
 

@@ -5,7 +5,7 @@ import { GitError } from "../lib/errors.js";
 import { logger } from "../lib/logger.js";
 
 /**
- * GitService handles all Git operations for RYME.
+ * GitService handles all Git operations for PULSE.
  *
  * Uses simple-git (a Node.js wrapper around git CLI) instead of raw
  * child_process to benefit from structured output and error handling.

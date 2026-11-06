@@ -141,7 +141,7 @@ class AuthService {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: "application/vnd.github.v3+json",
-        "User-Agent": "RYME-Platform",
+        "User-Agent": "PULSE-Platform",
       },
     });
 

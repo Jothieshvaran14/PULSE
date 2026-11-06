@@ -1,5 +1,5 @@
 /**
- * Custom error classes for RYME.
+ * Custom error classes for PULSE.
  *
  * Each error type maps to an HTTP status code and error code string.
  * The global error handler middleware uses these to format responses.

@@ -50,7 +50,7 @@ packages/db/prisma/migrations/**/migration_lock.toml
 # Docker
 docker/data/
 
-# RYME workspace data (cloned repos, build artifacts)
+# PULSE workspace data (cloned repos, build artifacts)
 data/
 workspaces/
 

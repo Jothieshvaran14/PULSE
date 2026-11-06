@@ -1,5 +1,5 @@
 # =============================================================================
-# RYME — Verify Database Entries
+# PULSE — Verify Database Entries
 # =============================================================================
 # Usage: node tests\verify-db.mjs
 # Requires: @prisma/client, DATABASE_URL env var
@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log("=".repeat(60));
-  console.log("RYME — Database Verification");
+  console.log("PULSE — Database Verification");
   console.log("=".repeat(60));
   console.log("");
 

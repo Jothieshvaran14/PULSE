@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
-# RYME — Development Environment Setup
+# PULSE — Development Environment Setup
 # =============================================================================
-# One-command setup for the RYME development environment.
+# One-command setup for the PULSE development environment.
 # Requires: Node.js >= 20, pnpm >= 9, Docker Engine
 # =============================================================================
 
@@ -14,7 +14,7 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-log() { echo -e "${CYAN}[RYME]${NC} $1"; }
+log() { echo -e "${CYAN}[PULSE]${NC} $1"; }
 success() { echo -e "${GREEN}[✓]${NC} $1"; }
 warn() { echo -e "${YELLOW}[!]${NC} $1"; }
 error() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
@@ -101,7 +101,7 @@ success "Workspace directory created"
 # =============================================================================
 echo ""
 echo -e "${GREEN}╔════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║         RYME setup complete! 🚀            ║${NC}"
+echo -e "${GREEN}║         PULSE setup complete! 🚀            ║${NC}"
 echo -e "${GREEN}╠════════════════════════════════════════════╣${NC}"
 echo -e "${GREEN}║                                            ║${NC}"
 echo -e "${GREEN}║  Run:  pnpm dev                            ║${NC}"

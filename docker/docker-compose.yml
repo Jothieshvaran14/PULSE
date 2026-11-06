@@ -25,7 +25,7 @@ services:
   # Traefik — Reverse proxy for deployed applications
   # ---------------------------------------------------------------------------
   # Traefik uses the Docker provider to auto-discover containers with labels.
-  # It does NOT proxy the RYME backend/frontend — only user-deployed apps.
+  # It does NOT proxy the PULSE backend/frontend — only user-deployed apps.
   traefik:
     image: traefik:v3.3
     container_name: ryme-traefik
@@ -54,7 +54,7 @@ volumes:
 # Networks
 # -----------------------------------------------------------------------------
 # All deployed containers join this network so Traefik can route to them.
-# The RYME backend creates containers on this network via dockerode.
+# The PULSE backend creates containers on this network via dockerode.
 networks:
   ryme-network:
     name: ryme-network

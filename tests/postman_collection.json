@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "RYME API - Milestone 1",
-    "description": "Complete API testing collection for RYME authentication system.\n\nBASE URL: http://localhost:3001\n\nSetup:\n1. Start PostgreSQL: docker compose -f docker/docker-compose.yml up -d postgres\n2. Start Backend: cd apps/backend && pnpm dev\n3. Start Frontend: cd apps/frontend && pnpm dev\n\nEnvironment Variables Required:\n- DATABASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET\n- JWT_SECRET (32+ chars), TOKEN_ENCRYPTION_KEY (32+ chars)\n- FRONTEND_URL=http://localhost:5173",
+    "name": "PULSE API - Milestone 1",
+    "description": "Complete API testing collection for PULSE authentication system.\n\nBASE URL: http://localhost:3001\n\nSetup:\n1. Start PostgreSQL: docker compose -f docker/docker-compose.yml up -d postgres\n2. Start Backend: cd apps/backend && pnpm dev\n3. Start Frontend: cd apps/frontend && pnpm dev\n\nEnvironment Variables Required:\n- DATABASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET\n- JWT_SECRET (32+ chars), TOKEN_ENCRYPTION_KEY (32+ chars)\n- FRONTEND_URL=http://localhost:5173",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
