@@ -2,6 +2,9 @@ import axios from "axios";
 
 const API_BASE = "/api/v1";
 
+/** Single source of truth for the session token storage key (C2: pulse_auth_token). */
+export const AUTH_TOKEN_KEY = "pulse_auth_token";
+
 export const api = axios.create({
   baseURL: API_BASE,
   headers: {
@@ -12,7 +15,7 @@ export const api = axios.create({
 
 // Request interceptor — attach auth token from sessionStorage
 api.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem("ryme_auth_token");
+  const token = sessionStorage.getItem(AUTH_TOKEN_KEY);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -50,7 +53,7 @@ api.interceptors.response.use(
   (error) => {
     // If we get a 401, clear the stored token
     if (error.response?.status === 401) {
-      sessionStorage.removeItem("ryme_auth_token");
+      sessionStorage.removeItem(AUTH_TOKEN_KEY);
       // Redirect to login if not already there
       if (!window.location.pathname.startsWith("/login")) {
         window.location.href = "/login";

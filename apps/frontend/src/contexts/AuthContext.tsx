@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { authApi, type AuthUser } from "../api/auth";
+import { AUTH_TOKEN_KEY } from "../api/client";
 
 // =============================================================================
 // Types
@@ -32,7 +33,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 // Provider
 // =============================================================================
 
-const TOKEN_KEY = "ryme_auth_token";
+const TOKEN_KEY = AUTH_TOKEN_KEY;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
