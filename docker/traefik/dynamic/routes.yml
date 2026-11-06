@@ -1,10 +1,5 @@
 http:
   routers:
-    dashboard:
-      rule: "Host(`traefik.localhost`)"
-      entryPoints:
-        - web
-      service: api@internal
     stress-test-3:
       rule: "Host(`stress-test-3.localhost`)"
       entryPoints:
