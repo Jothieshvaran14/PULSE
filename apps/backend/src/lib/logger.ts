@@ -21,6 +21,6 @@ export const logger = pino({
         }
       : undefined,
   base: {
-    service: "ryme-backend",
+    service: "pulse-backend",
   },
 });
