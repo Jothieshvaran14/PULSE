@@ -164,11 +164,21 @@ if (restart.code !== 0) {
   process.exit(1);
 }
 
-// Verify via Traefik's insecure API (inside the container).
+// Verify via Traefik's API (inside the container). SEC-24 disables the
+// insecure dashboard listener, so this is best-effort: when the API is not
+// listening we confirm the container is running and skip with guidance.
 await new Promise((r) => setTimeout(r, 4000));
 const api = docker("exec", "ryme-traefik", "wget", "-qO-", "http://localhost:8080/api/http/routers");
 if (api.code !== 0) {
-  console.error(`VERIFY FAILED: Traefik API unreachable (${api.err})`);
+  const state = docker("inspect", "-f", "{{.State.Running}}", "ryme-traefik");
+  if (state.code === 0 && state.out.trim() === "true") {
+    console.warn(
+      "VERIFY SKIPPED: Traefik is running but the dashboard API is disabled (SEC-24).\n" +
+        "Routes were written and Traefik restarted; validate with `pnpm test` (round-trip)."
+    );
+    process.exit(0);
+  }
+  console.error(`VERIFY FAILED: Traefik API unreachable and container not running (${api.err})`);
   process.exit(1);
 }
 let liveRouters;

@@ -12,7 +12,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_local_dev_password}
       POSTGRES_DB: ${POSTGRES_DB:-ryme}
     ports:
-      - "5432:5432"
+      # SEC-23: loopback-only bind — the dev database is not reachable from the LAN.
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -35,8 +36,9 @@ services:
     ports:
       # HTTP entrypoint for deployed apps (*.localhost)
       - "80:80"
-      # Traefik dashboard (development only)
-      - "${TRAEFIK_DASHBOARD_PORT:-8080}:8080"
+      # Traefik dashboard port (development only). SEC-24: loopback-bound and
+      # inert while api.insecure is false; kept for explicit local debugging.
+      - "127.0.0.1:${TRAEFIK_DASHBOARD_PORT:-8080}:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro

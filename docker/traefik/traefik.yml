@@ -4,7 +4,10 @@
 # API / Dashboard
 api:
   dashboard: true
-  insecure: true
+  # SEC-24: never serve the dashboard API unauthenticated. The dashboard is
+  # reachable only through an explicitly configured authenticated router;
+  # there is no insecure catch-all listener.
+  insecure: false
 
 # Entrypoints
 entryPoints:
