@@ -1,5 +1,11 @@
 # RYME Architecture & Engineering Design
 
+> **Status: superseded.** This document describes the platform as it existed before the
+> PULSE rebrand. It is retained as a historical design record; the current target
+> architecture is [`docs/pulse/PULSE-02-target-architecture.md`](pulse/PULSE-02-target-architecture.md).
+> Legacy identifiers below (`ryme-network`, `ryme-*` container names) describe the state at
+> the time of writing and are preserved deliberately — see `PULSE-15` section 4.
+
 This document outlines the architectural decisions, system design, and engineering principles behind **RYME**, a self-hosted open-source deployment platform.
 
 ---

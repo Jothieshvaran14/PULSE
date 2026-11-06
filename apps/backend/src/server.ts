@@ -66,7 +66,7 @@ async function main(): Promise<void> {
 
   const server = app.listen(config.port, config.host, () => {
     logger.info(
-      `🚀 RYME Backend running at http://${config.host}:${config.port}`
+      `🚀 PULSE Backend running at http://${config.host}:${config.port}`
     );
     logger.info(`📋 Environment: ${config.nodeEnv}`);
     logger.info(`🐳 Docker socket: ${config.dockerSocketPath}`);

@@ -30,8 +30,8 @@ export default function LoginPage() {
           <div style={{ width: "64px", height: "64px", borderRadius: "var(--radius-xl)", background: "rgba(122, 31, 43, 0.15)", border: "1px solid rgba(122, 31, 43, 0.2)", display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: "24px" }}>
             <Rocket style={{ width: "28px", height: "28px", color: "var(--color-maroon-400)" }} />
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 600, letterSpacing: "-0.025em", color: "var(--color-text-primary)" }}>RYME</h1>
-          <p className="text-section-subtitle" style={{ marginTop: "8px" }}>Deploy with confidence</p>
+          <h1 style={{ fontSize: "28px", fontWeight: 600, letterSpacing: "-0.025em", color: "var(--color-text-primary)" }}>PULSE</h1>
+          <p className="text-section-subtitle" style={{ marginTop: "8px" }}>Trust Every Flow.</p>
         </div>
 
         <div className="card" style={{ padding: "32px" }}>

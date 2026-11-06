@@ -36,7 +36,7 @@ export default function DashboardPage() {
       <div className="page-header">
         <div className="page-header-left">
           <h1 className="text-page-title">Dashboard</h1>
-          <p className="text-section-subtitle">Overview of your deployment platform</p>
+          <p className="text-section-subtitle">Overview of your reliability estate</p>
         </div>
       </div>
 

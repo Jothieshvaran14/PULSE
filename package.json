@@ -2,7 +2,7 @@
   "name": "ryme",
   "version": "0.1.0",
   "private": true,
-  "description": "Self-hosted open-source deployment platform",
+  "description": "API & data reliability intelligence platform",
   "license": "MIT",
   "scripts": {
     "dev": "pnpm -r --if-present --parallel dev",

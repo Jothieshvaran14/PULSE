@@ -40,7 +40,7 @@ built) · **Planned** (designed and scheduled, no code yet).
 
 | Capability | Status | Evidence |
 | --- | --- | --- |
-| Request/input validation on API endpoints (Zod schemas, typed 400 errors) | **Implemented** | `packages/shared/src/validation/*`, `apps/backend/src/middleware/validate.ts`; covered by `test-api-regressions` (22/22) |
+| Request/input validation on API endpoints (Zod schemas, typed 400 errors) | **Implemented** | `packages/shared/src/validation/*`, `apps/backend/src/middleware/validate.ts`; covered by `test-api-regressions` (24/24) |
 | Owner-scoped authorization across projects, deployments, and logs | **Implemented** | `apps/backend/src/middleware/ownership.ts`; covered by `repro-idor` (37/37) |
 | Repo → build → container deployment with framework detection and Traefik routing | **Implemented** (legacy baseline being re-used) | `apps/backend/src/services/*`; live smoke `8/8` |
 | Lossless management of Traefik routing configuration | **Implemented** | `traefik-routing.service.ts` on the `yaml` Document API; 28/28 round-trip assertions |
@@ -51,7 +51,7 @@ built) · **Planned** (designed and scheduled, no code yet).
 | **Schema/data-quality checks** (rule sets + schema snapshots) | **Planned** | Roadmap Phase 3 (item 3.3); target module M4 |
 | **Lineage** (edge graph from run events) | **Planned** | Roadmap Phase 4 (item 4.1); target module M5 |
 | **Dependency-impact analysis** ("what breaks if this field changes?") | **Planned** | Roadmap Phase 4 (item 4.1); target module M7 |
-| CI quality + integration gate | **In development** | `.github/workflows/ci.yml` is written and YAML-validated, but has not yet run on GitHub runners |
+| CI quality + integration gate | **Implemented** | `.github/workflows/ci.yml` runs on GitHub-hosted runners; verified green on runs `40268341782`, `40268838473`, `40269624867`, `40269781178` and every subsequent push |
 
 ---
 
@@ -114,21 +114,21 @@ Derived from the actual manifests:
 **Works (verified by executed checks, 2026-10-26):**
 
 - `pnpm typecheck`, `pnpm lint`, `pnpm build`, `pnpm test`, `pnpm test:integration` — all exit 0.
-- `test-api-regressions` 22/22, `repro-idor` 37/37, `repro-traefik-roundtrip` 28/28, dev-auth gate 5/5.
+- `test-api-regressions` 24/24, `repro-idor` 37/37, `repro-traefik-roundtrip` 28/28, dev-auth gate 5/5.
 - Live API smoke against a locally started backend: 8/8.
 - Live stack (Postgres + Traefik + deployed containers) healthy; routing config intact after repair.
 
 **Incomplete:**
 
 - All PULSE product capabilities from §2 (contract checks, lineage, pipelines) — planned only.
-- Rollback flow: work-in-progress code exists but is deliberately uncommitted and its route is not registered (decision D8 still open).
-- Rebrand to PULSE: the codebase still uses the previous identifiers in many places (roadmap Phase 1).
+- Rollback flow: a dedicated implementation plan exists (`PULSE-14` section 4); the 3 work-in-progress files stay deliberately uncommitted and the route is not registered (D8-residual: plan approved, implementation deferred).
+- Rebrand to PULSE: user-facing identity and code-only identifiers are migrated; Docker-side identifiers (network, container names, labels) are intentionally deferred (`PULSE-15` section 3.3).
 - No Prisma migration baseline yet — the database is schema-push managed.
 - Security hardening items (rate limiting, CORS/CSP tightening, egress policy) are recorded, not implemented.
 
 **Unverified / not claimed:**
 
-- CI has not yet run on GitHub runners; the workflow is validated only as YAML + local equivalent commands.
+- CI runs on GitHub-hosted runners for every push to `main`; run IDs and results are recorded in `PULSE-16`.
 - No performance, load, or external security-audit results exist. Any future benchmark numbers will be published only with reproducible commands.
 - Deployment flows were exercised on this development machine only.
 
@@ -245,7 +245,7 @@ Decisions awaiting owner approval: [`docs/pulse/PULSE-07-decision-status.md`](do
 | --- | --- | --- |
 | **Phase 0** — Stabilize the baseline | Green gates, dev-auth fail-closed, decisions logged | **Complete** (`PULSE-06`) |
 | **Phase 0.1** — Data integrity, tenant isolation, routing | Schema drift repaired, owner scoping enforced, Traefik round-trip fixed | **Complete** (`PULSE-09`–`PULSE-12`) |
-| **Phase 1** — Rebrand + public readiness + hardening | PULSE naming waves, rate limiting, CORS/CSP, CI maturity, repo hygiene | **Not started** (needs D2/D3/D7 approvals) |
+| **Phase 1** — Rebrand + public readiness + hardening | PULSE naming waves, rate limiting, CORS/CSP, CI maturity, repo hygiene | **In progress** — Waves A–C and security quick wins done (`PULSE-16`); public readiness blocked on D7 |
 | **Phase 2** — MVP "contract check + evidence" | OpenAPI ingest, contract validation, HTTP checks, run evidence, queue/worker | **Planned** (needs D12) |
 | **Phase 3** — Data pipelines & quality | Containerized runs with limits, pipeline steps, quality rules, schema snapshots | **Planned** |
 | **Phase 4** — Cross-system intelligence | Lineage, impact analysis, cross-correlation, evidence-grounded diagnostics | **Planned** |
