@@ -1,5 +1,5 @@
 {
-  "name": "@ryme/shared",
+  "name": "@pulse/shared",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",

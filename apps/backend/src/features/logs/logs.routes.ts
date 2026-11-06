@@ -3,7 +3,7 @@ import { logsController } from "./logs.controller.js";
 import { validate } from "../../middleware/validate.js";
 import { authenticate } from "../auth/auth.middleware.js";
 import { requireDeploymentOwner } from "../../middleware/ownership.js";
-import { deploymentLogQuerySchema } from "@ryme/shared";
+import { deploymentLogQuerySchema } from "@pulse/shared";
 
 export const logRoutes: Router = Router();
 

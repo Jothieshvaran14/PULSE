@@ -46,7 +46,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter @ryme/db db:generate
+        run: pnpm --filter @pulse/db db:generate
 
       # CI-safe config only (no real secrets) — verified to satisfy the Zod
       # config schema. The backend test script reads --env-file=../../.env.
@@ -115,12 +115,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter @ryme/db db:generate
+        run: pnpm --filter @pulse/db db:generate
 
-      # Backend runtime resolves @ryme/shared and @ryme/db through their
+      # Backend runtime resolves @pulse/shared and @pulse/db through their
       # dist/ entry points — both must be built for the harness to boot.
       - name: Build workspace runtime packages
-        run: pnpm --filter @ryme/shared --filter @ryme/db build
+        run: pnpm --filter @pulse/shared --filter @pulse/db build
 
       # Creates/drops the guarded scratch database (ryme_phase01_test) inside
       # the service container; JWT/encryption keys fall back to dummy values

@@ -10,7 +10,7 @@ import {
   updateProjectSchema,
   importProjectSchema,
   paginationQuerySchema,
-} from "@ryme/shared";
+} from "@pulse/shared";
 
 export const projectRoutes: Router = Router();
 

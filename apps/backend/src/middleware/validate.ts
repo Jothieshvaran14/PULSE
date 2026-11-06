@@ -5,7 +5,7 @@ import { ValidationError } from "../lib/errors.js";
 /**
  * Detects a ZodError across module-system boundaries.
  *
- * @ryme/shared ships a CJS build; when its schemas reject, they throw the CJS
+ * @pulse/shared ships a CJS build; when its schemas reject, they throw the CJS
  * copy of zod's ZodError. This backend module (ESM) imports the ESM copy —
  * zod's exports map has distinct `import`/`require` entry points, so the two
  * classes have DIFFERENT identities and `instanceof` fails (dual-package

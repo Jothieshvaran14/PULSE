@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { projectsService } from "./projects.service.js";
 import { deploymentsService } from "../deployments/deployments.service.js";
-import type { CreateProjectSchema, UpdateProjectSchema, ImportProjectSchema, PaginationQuerySchema } from "@ryme/shared";
+import type { CreateProjectSchema, UpdateProjectSchema, ImportProjectSchema, PaginationQuerySchema } from "@pulse/shared";
 
 export const projectsController = {
   async list(req: Request, res: Response, next: NextFunction): Promise<void> {

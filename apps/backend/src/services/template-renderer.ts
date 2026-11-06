@@ -1,6 +1,6 @@
 import Handlebars from "handlebars";
 import type { Template, TemplateMeta } from "./template-registry.js";
-import type { DetectionResult } from "@ryme/shared";
+import type { DetectionResult } from "@pulse/shared";
 
 /**
  * Result of rendering a template.

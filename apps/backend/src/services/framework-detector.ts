@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { DetectionResult } from "@ryme/shared";
+import type { DetectionResult } from "@pulse/shared";
 import { FrameworkDetectionError } from "../lib/errors.js";
 import { logger } from "../lib/logger.js";
 

@@ -38,8 +38,8 @@ graph TD
     Traefik -->|Docker Bridge Network| Containers[Deployed Application Containers]
     
     subgraph RYME Monorepo
-        BE -->|Imports| Shared[@ryme/shared - Zod Schemas / Types]
-        BE -->|Imports| DB[@ryme/db - Prisma ORM Singleton]
+        BE -->|Imports| Shared[@pulse/shared - Zod Schemas / Types]
+        BE -->|Imports| DB[@pulse/db - Prisma ORM Singleton]
         FE -->|Imports| Shared
     end
     

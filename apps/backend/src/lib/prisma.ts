@@ -1,4 +1,4 @@
-import { prisma } from "@ryme/db";
+import { prisma } from "@pulse/db";
 
 /**
  * Re-export the PrismaClient singleton from the db package.

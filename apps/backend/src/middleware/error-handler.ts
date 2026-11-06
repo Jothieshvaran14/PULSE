@@ -68,7 +68,7 @@ export function errorHandler(
   // Raw ZodError escaping validation (thrown anywhere outside validate()).
   // Input-validation failures are CLIENT errors → 400, never 500. Duck-typed
   // because of the CJS/ESM dual-package hazard documented in validate.ts
-  // (schemas from @ryme/shared throw the CJS copy of ZodError). Only the
+  // (schemas from @pulse/shared throw the CJS copy of ZodError). Only the
   // field path and message are exposed — never the offending input value.
   const zodIssues = (err as { name?: string; issues?: unknown }).issues;
   if (

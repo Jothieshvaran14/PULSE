@@ -1,5 +1,5 @@
 {
-  "name": "@ryme/backend",
+  "name": "@pulse/backend",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.8.0",
-    "@ryme/db": "workspace:*",
-    "@ryme/shared": "workspace:*",
+    "@pulse/db": "workspace:*",
+    "@pulse/shared": "workspace:*",
     "cors": "^2.8.5",
     "dockerode": "^4.0.5",
     "express": "^4.21.2",

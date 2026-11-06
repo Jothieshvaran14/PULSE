@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const HARNESS = path.join(ROOT, "tests", "helpers", "dev-gate-harness.mjs");
-// tsx is a devDependency of @ryme/backend only — invoke its CLI directly so the
+// tsx is a devDependency of @pulse/backend only — invoke its CLI directly so the
 // test works from the repo root without npx/shell resolution.
 const TSX_CLI = path.join(ROOT, "apps", "backend", "node_modules", "tsx", "dist", "cli.mjs");
 

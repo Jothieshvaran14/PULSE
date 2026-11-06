@@ -1,6 +1,6 @@
 import { projectsRepository } from "./projects.repository.js";
 import { NotFoundError, ConflictError } from "../../lib/errors.js";
-import type { CreateProjectSchema, UpdateProjectSchema } from "@ryme/shared";
+import type { CreateProjectSchema, UpdateProjectSchema } from "@pulse/shared";
 import { encrypt, decrypt } from "../../lib/crypto.js";
 import { dockerService } from "../../services/docker.service.js";
 import { prisma } from "../../lib/prisma.js";

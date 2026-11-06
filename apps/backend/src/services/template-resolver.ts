@@ -1,6 +1,6 @@
 import { AppError } from "../lib/errors.js";
 import { templateRegistry, type Template } from "./template-registry.js";
-import type { DetectionResult } from "@ryme/shared";
+import type { DetectionResult } from "@pulse/shared";
 
 /**
  * TemplateResolver determines which template to use for a given framework detection.

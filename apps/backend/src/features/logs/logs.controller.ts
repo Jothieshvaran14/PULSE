@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { logsService } from "./logs.service.js";
-import type { DeploymentLogQuerySchema } from "@ryme/shared";
+import type { DeploymentLogQuerySchema } from "@pulse/shared";
 import type { DeploymentStep, LogLevel } from "@prisma/client";
 
 export const logsController = {

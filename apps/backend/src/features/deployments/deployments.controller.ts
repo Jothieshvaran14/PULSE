@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { deploymentsService } from "./deployments.service.js";
-import type { PaginationQuerySchema } from "@ryme/shared";
+import type { PaginationQuerySchema } from "@pulse/shared";
 
 export const deploymentsController = {
   async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
